@@ -1,0 +1,16 @@
+{
+  "name": "wick-bc",
+  "version": "2.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": ["discord", "broadcast", "multi-client"],
+  "author": "Wick Studio",
+  "license": "MIT",
+  "description": "Advanced Discord broadcast system with multi-client support",
+  "dependencies": {
+    "discord.js": "^13.12.0"
+  }
+}
