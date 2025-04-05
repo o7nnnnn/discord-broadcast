@@ -139,7 +139,13 @@ class BroadcastManager {
                 this.incrementLoad(client);
                 const messageWithMention = `${message}\n\n<@${member.id}>`;
                 
-                await member.send(messageWithMention);
+                const user = await client.users.fetch(member.id).catch(() => null);
+                
+                if (!user) {
+                    throw new Error("Could not fetch user");
+                }
+                
+                await user.send(messageWithMention);
                 results.successCount++;
                 
                 results.processedCount++;
@@ -172,7 +178,7 @@ class BroadcastManager {
                     errorReason = error.message.substring(0, 100);
                 }
                 
-                logger.error(`Failed to send message to ${member.user?.tag || member.id}: ${errorReason}`);
+                logger.error(`Client ${client.user.tag} failed to send message to ${member.user?.tag || member.id}: ${errorReason}`);
                 results.processedCount++;
             } finally {
                 this.decrementLoad(client);
