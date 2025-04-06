@@ -18,8 +18,13 @@ const initializeClients = async () => {
         process.exit(1);
     }
     
+    let successfulLogins = 0;
+    
     for (const token of config.bot.tokens) {
-        if (!token) continue;
+        if (!token) {
+            logger.warn('Empty token found in configuration, skipping');
+            continue;
+        }
 
         const client = new Client({
             intents: [
@@ -37,17 +42,18 @@ const initializeClients = async () => {
         try {
             await client.login(token);
             clients.push(client);
-            logger.info(`Client logged in: ${client.user.tag}`);
+            successfulLogins++;
+            logger.info(`Client logged in: ${client.user.tag} (${successfulLogins}/${config.bot.tokens.filter(Boolean).length})`);
         } catch (error) {
-            logger.error(`Failed to login with token: ${token.substring(0, 8)}...`, error);
+            logger.error(`Failed to login with token: ${token.substring(0, 8)}... Error: ${error.message}`);
         }
     }
     
     if (clients.length > 0) {
-        broadcastManager.initialize(clients);
-        logger.info(`Successfully initialized ${clients.length} clients`);
+        await broadcastManager.initialize(clients);
+        logger.info(`Successfully initialized ${clients.length} clients for broadcasting`);
     } else {
-        logger.error('No clients were able to log in. Please check your tokens in config.js or .env file');
+        logger.error('No clients were able to log in. Please check your tokens in config.js');
         process.exit(1);
     }
 };
